@@ -1,0 +1,22 @@
+{
+  "name": "agulhas_de_buffon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilan-francisco/agulhas_de_buffon.git"
+  },
+  "author": "ilan-francisco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ilan-francisco/agulhas_de_buffon/issues"
+  },
+  "homepage": "https://github.com/ilan-francisco/agulhas_de_buffon#readme",
+  "dependencies": {
+    "chart.js": "^2.9.4"
+  }
+}
