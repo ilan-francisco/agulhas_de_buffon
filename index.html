@@ -3,8 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <title>Teste</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 10px;
+
+        }
+        #canvas {
+            height: 100%;
+            background-color: #eee;
+        }
+    </style>
 </head>
 <body>
-    <b>Hello world!</b>
+    <div>
+        <div><b id="result">set number of needles in the next input</b></div>
+        <input type="text" id="n_sample" value="100">
+        <button id="btn-go">Go</button>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script
+            src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+            crossorigin="anonymous"></script>
+    <script>
+        const height = $("#canvas").height();
+        const width = $("#canvas").height();
+        const used_width = height - height % 200;
+        const NEEDLE_LENGTH = 100;
+
+        var c = document.getElementById("canvas");
+        c.height = height;
+        c.width = used_width;
+
+        function degrees(radians) {
+            return radians * (180/Math.PI);
+        }
+
+        function radians(degrees) {
+            return degrees * (Math.PI/180);
+        }
+
+        function generate_result(ctx) {
+            const x = Math.floor( Math.random() * used_width );
+            const y = Math.floor( Math.random() * height );
+            const angle = Math.floor( Math.random() * 180) - 90;
+
+            const needle_left_y  = y - Math.sin(radians(angle)) * NEEDLE_LENGTH/2;
+            const needle_right_y = y + Math.sin(radians(angle)) * NEEDLE_LENGTH/2;
+
+            const needle_left_x  = x - Math.cos(radians(angle)) * NEEDLE_LENGTH/2;
+            const needle_right_x = x + Math.cos(radians(angle)) * NEEDLE_LENGTH/2;
+
+            //console.log(angle, Math.cos(radians(angle)), radians(angle), needle_left_x, x, needle_right_x);
+
+            ctx.beginPath();
+            ctx.strokeStyle = "#FF0000";
+            ctx.fillRect(x,y,2,2);
+            ctx.moveTo(needle_left_x, needle_left_y);
+            ctx.lineTo(needle_right_x, needle_right_y);
+            ctx.stroke();
+
+            let i;
+            for (i = 0; i <= used_width; i += 2*NEEDLE_LENGTH) {
+                const line_x = i;
+                //console.log(used_width)
+                //console.log(needle_left_x, line_x, needle_right_x)
+                if (line_x > needle_left_x &&
+                    line_x < needle_right_x ) {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
+        function generate_sample_result(n_sample) {
+            var ctx = c.getContext("2d");
+            ctx.clearRect(0,0,width,height);
+            ctx.beginPath();
+
+            ctx.strokeStyle = "#000000";
+            let i;
+            for (i = 0; i <= used_width; i+=2*NEEDLE_LENGTH) {
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, height);
+                ctx.stroke();
+            }
+
+            let count_crosseds = 0;
+            for (i = 0; i < n_sample; i++) {
+                count_crosseds += generate_result(ctx);
+            }
+            $("#result").text(i / count_crosseds);
+        }
+
+        $("#btn-go").click( function () {
+            let n_sample = parseInt($("#n_sample").val());
+            generate_sample_result(n_sample);
+        })
+    </script>
 </body>
 </html>
