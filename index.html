@@ -7,7 +7,7 @@
         html, body {
             width: 100%;
             height: 100%;
-            margin: 0;
+            margin: 10px;
             padding: 10px;
 
         }
@@ -18,10 +18,12 @@
     </style>
 </head>
 <body>
+    <img hidden src="needle.png" id="needle-img"/>
     <div>
         <div><b id="result">set number of needles in the next input</b></div>
-        <input type="text" id="n_sample" value="100">
+        <input type="text" id="n_sample" value="1">
         <button id="btn-go">Go</button>
+        <b id="pos"></b>
     </div>
     <canvas id="canvas"></canvas>
     <script
@@ -32,7 +34,9 @@
         const height = $("#canvas").height();
         const width = $("#canvas").height();
         const used_width = height - height % 200;
-        const NEEDLE_LENGTH = 100;
+        const NEEDLE_HEIGHT = 100;
+        const NEEDLE_WIDTH = 3;
+        const needle_img = document.getElementById("needle-img");
 
         var c = document.getElementById("canvas");
         c.height = height;
@@ -51,26 +55,26 @@
             const y = Math.floor( Math.random() * height );
             const angle = Math.floor( Math.random() * 180) - 90;
 
-            const needle_left_y  = y - Math.sin(radians(angle)) * NEEDLE_LENGTH/2;
-            const needle_right_y = y + Math.sin(radians(angle)) * NEEDLE_LENGTH/2;
+            const needle_left_y  = y - Math.sin(radians(angle)) * NEEDLE_HEIGHT/2;
+            const needle_right_y = y + Math.sin(radians(angle)) * NEEDLE_HEIGHT/2;
 
-            const needle_left_x  = x - Math.cos(radians(angle)) * NEEDLE_LENGTH/2;
-            const needle_right_x = x + Math.cos(radians(angle)) * NEEDLE_LENGTH/2;
+            const needle_left_x  = x - Math.cos(radians(angle)) * NEEDLE_HEIGHT/2;
+            const needle_right_x = x + Math.cos(radians(angle)) * NEEDLE_HEIGHT/2;
 
             //console.log(angle, Math.cos(radians(angle)), radians(angle), needle_left_x, x, needle_right_x);
 
-            ctx.beginPath();
-            ctx.strokeStyle = "#FF0000";
-            ctx.fillRect(x,y,2,2);
-            ctx.moveTo(needle_left_x, needle_left_y);
-            ctx.lineTo(needle_right_x, needle_right_y);
-            ctx.stroke();
+            //ctx.beginPath();
+            ctx.save();
+            ctx.translate(x,y);
+            ctx.rotate(radians(angle-90));
+            ctx.translate(-NEEDLE_WIDTH/2,-NEEDLE_HEIGHT/2);
+            ctx.drawImage(needle_img, 0,0, NEEDLE_WIDTH, NEEDLE_HEIGHT);
+            ctx.restore();
+
 
             let i;
-            for (i = 0; i <= used_width; i += 2*NEEDLE_LENGTH) {
+            for (i = 0; i <= used_width; i += 2*NEEDLE_HEIGHT) {
                 const line_x = i;
-                //console.log(used_width)
-                //console.log(needle_left_x, line_x, needle_right_x)
                 if (line_x > needle_left_x &&
                     line_x < needle_right_x ) {
                     return 1;
@@ -83,10 +87,12 @@
             var ctx = c.getContext("2d");
             ctx.clearRect(0,0,width,height);
             ctx.beginPath();
+            ctx.save();
+            ctx.lineWidth = 4;
 
             ctx.strokeStyle = "#000000";
             let i;
-            for (i = 0; i <= used_width; i+=2*NEEDLE_LENGTH) {
+            for (i = 0; i <= used_width; i+=2*NEEDLE_HEIGHT) {
                 ctx.moveTo(i, 0);
                 ctx.lineTo(i, height);
                 ctx.stroke();
