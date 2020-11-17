@@ -28,7 +28,6 @@ function generate_result(ctx) {
     ctx.drawImage(needle_img, 0,0, NEEDLE_WIDTH, NEEDLE_HEIGHT);
     ctx.restore();
 
-
     let i;
     for (i = 0; i <= used_width; i += 2*NEEDLE_HEIGHT) {
         const line_x = i;
@@ -54,6 +53,8 @@ function generate_sample_result(n_sample) {
         ctx.stroke();
     }
 
+    let optimize = $("#check_optimize").is(":checked");
+    let step_size = Math.round(n_sample / 10)
     let count_crosseds = 0;
     i = 0;
     function step() {
@@ -64,9 +65,26 @@ function generate_sample_result(n_sample) {
             chart.data.datasets[0].data.push(count_crosseds);
             chart.options.scales.yAxes[0].ticks.max = i;
             chart.options.scales.yAxes[1].ticks.max = i / count_crosseds;
-            chart.update();
-            $("#pi_result").text((i / count_crosseds).toFixed(2));
-            setTimeout(step, 50);
+
+            $("#pi_result").text((i / count_crosseds).toFixed(2)+" ("+i+" agulhas)");
+            if (optimize) {
+                if (i % step_size === 0) {
+                    setTimeout(step, 0);
+                } else {
+                    step();
+                }
+                if (i%n_sample === 0) {
+                    chart.update(); //TODO aguardar resultados
+                }
+            } else {
+                if (i % step_size === 0) {
+                    chart.update();
+                }
+                if (i%n_sample === 0) {
+                    chart.update();
+                }
+                setTimeout(step, 0);
+            }
         }
     }
 
@@ -78,4 +96,11 @@ $("#btn-go").click( function () {
     $("#pi_result_container")[0].hidden = false;
     let n_sample = parseInt($("#n_sample").val());
     generate_sample_result(n_sample);
+})
+
+$("#n_sample").on("input", function () {
+    let n_sample = parseInt($("#n_sample").val());
+    if (n_sample > 1000) {
+        $("#check_optimize").prop('checked', true);
+    }
 })
