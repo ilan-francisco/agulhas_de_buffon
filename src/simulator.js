@@ -39,7 +39,7 @@ function generate_result(ctx) {
     return 0;
 }
 
-function generate_sample_result(n_sample) {
+function draw_vertical_lines() {
     var ctx = c.getContext("2d");
     ctx.clearRect(0,0,width,height);
     ctx.beginPath();
@@ -52,9 +52,15 @@ function generate_sample_result(n_sample) {
         ctx.lineTo(i, height);
         ctx.stroke();
     }
+}
+
+function generate_sample_result(n_sample) {
+    var ctx = c.getContext("2d");
+
+    draw_vertical_lines()
 
     let optimize = $("#check_optimize").is(":checked");
-    let step_size = Math.round(n_sample / 10)
+    let step_size = Math.round(n_sample / 30)
     let count_crosseds = 0;
     i = 0;
     function step() {
@@ -74,7 +80,7 @@ function generate_sample_result(n_sample) {
                     step();
                 }
                 if (i%n_sample === 0) {
-                    chart.update(); //TODO aguardar resultados
+                    setTimeout(chart.update(), 0); //TODO aguardar resultados
                 }
             } else {
                 if (i % step_size === 0) {
@@ -104,3 +110,5 @@ $("#n_sample").on("input", function () {
         $("#check_optimize").prop('checked', true);
     }
 })
+
+draw_vertical_lines()

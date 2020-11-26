@@ -27,6 +27,18 @@ function create_chart() {
 
         // Configuration options go here
         options: {
+            animation: {
+                duration: 0
+            },
+            hover: {
+                animationDuration: 0
+            },
+            elements: {
+                line: {
+                    tension: 0
+                }
+            },
+            responsiveAnimationDuration: 0,
             scales: {
                 yAxes: [{
                     position: "left",
@@ -59,9 +71,6 @@ function create_chart() {
                 }]
             }
         },
-        animation: {
-            duration: 0
-        }
 
     });
 }
